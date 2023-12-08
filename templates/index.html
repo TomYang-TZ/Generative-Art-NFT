@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>DataNFT Generator</title>
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
     <style>
         @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
 
@@ -234,6 +235,11 @@ label { display: table-row; text-align: left;align-items: flex;}
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+    #privateKey:hover #privateKeyTooltip{
+        visibility: visible;
+        opacity: 0.8;
+    }
+
         
     </style>
 </head>
@@ -256,8 +262,8 @@ label { display: table-row; text-align: left;align-items: flex;}
         
         <div style="display: flex;">
         <label for="privateKey" style="color: white">Private Key:</label>
-        <input style="margin-left: 60px;" type="password" id="privateKey" name="privateKey"></div><br>
-
+        <div class="tooltip"><input style="margin-left: 60px;" type="password" id="privateKey" name="privateKey"><span class="tooltiptext" style="color: red;">This is for development environment only. Do not disclose your private key!</span></div></div><br>
+        
         <div style="display: flex;">
         <label for="walletAddress" style="color: white">Wallet Address:</label>
         <input style="margin-left: 29px;" type="text" id="walletAddress" name="walletAddress"></div><br>

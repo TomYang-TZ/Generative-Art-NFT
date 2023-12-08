@@ -12,7 +12,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install -i https://test.pypi.org/simple/ lag-sdk==0.4.12
 
-# Make port 5000 available to the world outside this container
+# Make port 9999 available to the world outside this container
 EXPOSE 9999
 
 # Define environment variable

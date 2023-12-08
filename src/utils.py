@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 from swan_lag.api_client import APIClient
 from swan_lag.api.lag_client import LagAPI
 
-DEBUG = False
+DEBUG = True
 
 def get_image(url='https://pgmwn8b5xu.meta.crosschain.computer',
               username='admin',password='admin1234',
@@ -114,19 +114,21 @@ def datanft(dataset_name = "chain_link_space6",
     if DEBUG:print(img_path)
     upload_img2lag(img_path,dataset_name,1)
     
-    # Next we upload the image to IPFS
+    # Next we upload the image to IPFS, to a bucket named DataNFT on MCS
     
     try:
         img_link = save_to_MCS_bucket(initialize_bucket=True,overwrite_file=True,
-                                  bucket_name='trial',file_path=img_path,name=img_name)
+                                  bucket_name='DataNFT',file_path=img_path,name=img_name)
     except Exception as e:
         print(str(e))
         raise Exception("Error saving image to MCS bucket") 
     # print("Image Link on MCS: ", img_link)
     
     # Now we can create a data NFT
+    print("Creating data NFT")
     res = lag_client.data_nft_request(chain_id,wallet_address,dataset_name)
     start = time.time()
+    print("Waiting for data NFT to be created")
     while True:
         res = lag_client.try_claim_data_nft(wallet_address,dataset_name)
         if DEBUG:print(res)
