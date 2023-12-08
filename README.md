@@ -2,7 +2,7 @@
 
 ## Description
 
-Welcome to the `Swan Chain DataNFT` project. We used Lagrange APIs and Chainlink Functions to create data NFTs, allowing owners to embed usage terms in the NFT metadata. These NFTs are developed on the Sepolia and Mumbai testnets.
+Welcome to the `Swan Chain DataNFT` project. We used [Lagrange APIs and Chainlink Functions](https://github.com/lagrangedao/python-lag-sdk/tree/dev) to create data NFTs, allowing owners to embed usage terms in the NFT metadata. These NFTs are developed on the Sepolia and Mumbai testnets.
 
 ## Installation
 
