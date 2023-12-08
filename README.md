@@ -15,7 +15,10 @@ To set up the DataNFT Project, ensure you have a compatible virtual environment.
 git clone https://github.com/TomYang-TZ/Generative-DataNFT.git
 
 # Navigate to the project directory
-cd DataNFT-Project
+cd Generative-DataNFT 
+
+# Create a virtual environment first
+conda create -n "VIRTUAL_ENV_NAME" python=3.9
 
 # Run the setup script
 ./setup.sh
@@ -29,7 +32,7 @@ To run the DataNFT application locally:
 
 1. Navigate to the `DataNFT-V2` folder:
    ```bash
-   cd DataNFT-V2
+   cd Generative-DataNFT 
    ```
 
 2. Start the Flask application:
