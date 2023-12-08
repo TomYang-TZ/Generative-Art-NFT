@@ -18,6 +18,7 @@ document.getElementById('envForm').addEventListener('submit', function(e) {
             document.getElementById('envForm').style.display = 'none';
             document.getElementById('imageForm').style.display = 'inline';
             document.getElementById('cleanButton').style.display = 'inline';
+            document.getElementsByClassName('warning')[0].style.display = 'none';
         }
     })
     .catch(error => {
@@ -114,4 +115,5 @@ function cleanEnv() {
     document.getElementById('imageForm').style.display = 'none'; 
     document.getElementById('cleanButton').style.display = 'none';
     document.getElementById('main_title').style.display = 'inline';
+    document.getElementsByClassName('warning')[0].style.display = 'inline';
 }

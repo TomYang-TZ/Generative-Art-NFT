@@ -23,7 +23,19 @@ body{
     flex-direction: column;
 }
 
+.warning {
+    background-color: #FFCCCB; /* Light red background */
+    color: black;
+    margin: 10px 0;
+    padding: 15px;
+    border-left: 5px solid red; /* Red left border */
+    font-family: Arial, sans-serif;
+}
 
+.warning-icon {
+    margin-right: 5px;
+    vertical-align: middle;
+}
 .context {
     width: 100%;
     position: absolute;
@@ -32,6 +44,7 @@ body{
 }
 form{ display: table; 
       text-align: left;
+      
     }
 label { display: table-row; text-align: left;align-items: flex;}
 
@@ -251,7 +264,7 @@ label { display: table-row; text-align: left;align-items: flex;}
     <button class="button" id="cleanEnvButton" onclick="cleanEnv()" style="margin:10px">Reset Environment Variable</button>
     <button class="button" id="cleanButton" onclick="cleanResults()" style="margin:5px; display:none">Clean</button>
     </div>
-    <form id="envForm" style="z-index: 1; ">
+    <form id="envForm" style="z-index: 1;">
         <div style="display: flex;">
         <br><label for="lagrangeApiKey" style="color: white">Lagrange API Key:</label>
         <input style="margin-left: 15px;" type="password" id="lagrangeApiKey" name="lagrangeApiKey"></div><br>
@@ -262,34 +275,38 @@ label { display: table-row; text-align: left;align-items: flex;}
         
         <div style="display: flex;">
         <label for="privateKey" style="color: white">Private Key:</label>
-        <div class="tooltip"><input style="margin-left: 60px;" type="password" id="privateKey" name="privateKey"><span class="tooltiptext" style="color: red;">Although we don't have access to what you entered here, this is for development & demonstration purpose only. Do not disclose your private key to other people!</span></div></div><br>
-        
+        <input style="margin-left: 60px;" type="password" id="privateKey" name="privateKey">
+</div>
+        <br>
+
+ 
+
         <div style="display: flex;">
         <label for="walletAddress" style="color: white">Wallet Address:</label>
         <input style="margin-left: 29px;" type="text" id="walletAddress" name="walletAddress"></div><br>
         
         <input class="button" type="submit" id="envButton" style="margin-left:58px;" value="Set Environment Variables"><br><br>
     </form>
+    <div class = "warning" style="display: flex; width: 50%;">
+        <span class="warning-icon">⚠️</span> 
+        This is for development & demonstration purpose only. Never disclose your private key to other people!
+    </div><br>
     <form id="imageForm" style="display: none;z-index: 1; ">
         <div style="display: flex;">
         <br><label for="spaceID" style="color: white">Space UUID:</label>
-        <div class="tooltip"><input style="margin-left: 95px;" type="text" class="tooltip" id="spaceID" name="spaceID" placeholder="eccbf673-4277-4f54-a71d-0286d5be8771" value="eccbf673-4277-4f54-a71d-0286d5be8771"><span class="tooltiptext">UUID of the Lagrange Space hosting the stable diffusion model</span></div></div><br>
+        <div class="tooltip"><input style="margin-left: 95px;" type="text" class="tooltip" id="spaceID" name="spaceID" placeholder="9f62111c-16aa-4111-bb24-e66b9923b0d0" value="9f62111c-16aa-4111-bb24-e66b9923b0d0"><span class="tooltiptext">UUID of the Lagrange Space hosting the stable diffusion model</span></div></div><br>
         
         <div style="display: flex;">
         <label for="datasetName" style="color: white">Dataset Name:</label>
         <div class="tooltip"><input style="margin-left: 75px;" type="text" class="tooltip" id="datasetName" name="datasetName"><span class="tooltiptext">Choose a name for the dataset you wish to use for minting and licensing dataNFT.</span></div></div><br>
 
-        <div style="display: flex;">
+        <!-- <div style="display: flex;">
         <label for="posTextPrompt" style="color: white">Positive Text Prompt:</label>
         <div class="tooltip"><input style="margin-left: 28px;" type="text" id="posTextPrompt" name="posTextPrompt"><span class="tooltiptext">Describe how you want to design the image</span></div></div><br>
 
         <div style="display: flex;">
         <label for="negTextPrompt" style="color: white">Negative Text Prompt:</label>
-        <div class="tooltip"><input style="margin-left: 21px;" type="text" id="negTextPrompt" name="negTextPrompt"><span class="tooltiptext">Describe what you want to exclude in the image</span></div></div><br>
-
-        <div style="display: flex;">
-        <label for="seed" style="color: white">Seed Value:</label>
-        <div class="tooltip"><input style="margin-left: 97px;" type="number" id="seed" name="seed"><span class="tooltiptext">Given an integer value to ensure the results are reproducible</span></div></div><br>
+        <div class="tooltip"><input style="margin-left: 21px;" type="text" id="negTextPrompt" name="negTextPrompt"><span class="tooltiptext">Describe what you want to exclude in the image</span></div></div><br> -->
 
         <input class="button" type="submit" id="generateButton" style="margin-left:38%" value="Generate">
     </form>

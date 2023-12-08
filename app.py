@@ -20,6 +20,7 @@ def set_env():
         os.environ['MCS_API_KEY'] = request.form['mcsApiKey']
         os.environ['PRIVATE_KEY'] = request.form['privateKey']
         os.environ['WALLET_ADDRESS'] = request.form['walletAddress']
+        os.environ['SPACE_UUID'] = '9f62111c-16aa-4111-bb24-e66b9923b0d0'
         return jsonify({'success': True})
     except Exception as e:
         print(e)
@@ -33,14 +34,13 @@ def generate():
             return jsonify({'error': f'Please fill in required fields'})
     space_uuid = request.form['spaceID']  
     dataset_name = request.form['datasetName']
-    pos_text_prompt = request.form['posTextPrompt']
-    neg_text_prompt = request.form['negTextPrompt']
-    seed = int(float((request.form['seed'])))
+    # pos_text_prompt = request.form['posTextPrompt']
+    # neg_text_prompt = request.form['negTextPrompt']
 
     # Call the datanft function from your utils.py
     try:
             mcs_img_link, contract_address, dataset_address,license_ipfs_uri, license_mint_hash = datanft(
-                dataset_name, pos_text_prompt, neg_text_prompt, space_uuid, seed
+                dataset_name, space_uuid, SEED=-1, UI=True
             )
             print({
                 'mcs_img_link': mcs_img_link,
