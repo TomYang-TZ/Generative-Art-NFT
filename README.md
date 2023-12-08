@@ -1,4 +1,6 @@
-# DataNFT Project
+#  Generative Art NFT with Lagrange AI and Chainlink Functions 
+![](./704ca26c-a23a-4b8c-8373-e537471b7651.png)
+![](./b5599547-455e-4805-a69b-df53482ae603.png)
 
 ## Description
 
