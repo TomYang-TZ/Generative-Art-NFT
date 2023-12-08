@@ -1,4 +1,5 @@
-# Generative Art NFT with Lagrange AI and Chainlink Functions![](https://www.gitbook.com/cdn-cgi/image/width=36,dpr=2,height=36,fit=contain,format=auto/https%3A%2F%2F576435799-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F-MauK7Ig3eWeXC35bZV7%252Ficon%252FUuoj67jxo8XNDYmZKupy%252Flogo_transparent.png%3Falt%3Dmedia%26token%3D8e053c6b-b5b3-4055-86dc-380c9f0a609d) 
+# <img src="https://www.gitbook.com/cdn-cgi/image/width=36,dpr=2,height=36,fit=contain,format=auto/https%3A%2F%2F576435799-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F-MauK7Ig3eWeXC35bZV7%252Ficon%252FUuoj67jxo8XNDYmZKupy%252Flogo_transparent.png%3Falt%3Dmedia%26token%3D8e053c6b-b5b3-4055-86dc-380c9f0a609d" width="30" height="30"/> Generative Art NFT with Lagrange AI and Chainlink Functions
+
 
 ## Sample Outputs
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmZKsSQ9WMSAtn1hw71Jr2DXVNnVsHvh8KS9s14JPEiJFc)
