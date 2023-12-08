@@ -62,7 +62,7 @@ The core functionality of this application is encapsulated in the `datanft()` fu
 ### Setup
 
 1. API Configuration:
-   - Create a `.env` file in the root directory.
+   - Create a `.env` file in the `src` directory.
    - Follow the template provided to set up your API keys and other configurations.
 
 2. Using the `datanft()` Function:
