@@ -18,8 +18,8 @@ DEBUG = False
 def get_image(url='https://pgmwn8b5xu.meta.crosschain.computer',
               username='admin',password='admin1234',
               prompt='a green apple',negative_prompt='violent',
-              sampler_name='DPM++ 2M Karras',
-              seed=985454925,cfg_scale=14,steps=30,width=1024,height=1024):
+              sampler_name='Euler',
+              seed=985454925,cfg_scale=5,steps=30,width=512,height=512):
     # Encode the username and password in Base64
     credentials = f'{username}:{password}'
     credentials = base64.b64encode(credentials.encode()).decode()
@@ -43,7 +43,7 @@ def get_image(url='https://pgmwn8b5xu.meta.crosschain.computer',
     try:
         r = response.json()  
         image = Image.open(io.BytesIO(base64.b64decode(r['images'][0])))
-        image = image.resize((512,512))
+        # image = image.resize((512,512))
     except Exception as e:
         print(e)
         raise Exception("Error getting image from diffusion model")
