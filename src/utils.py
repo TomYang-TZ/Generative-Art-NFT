@@ -19,7 +19,7 @@ def get_image(url='https://pgmwn8b5xu.meta.crosschain.computer',
               username='admin',password='admin1234',
               prompt='a green apple',negative_prompt='violent',
               sampler_name='DPM++ 2M Karras',
-              seed=985454925,cfg_scale=7,steps=20,width=512,height=512):
+              seed=985454925,cfg_scale=14,steps=30,width=1024,height=1024):
     # Encode the username and password in Base64
     credentials = f'{username}:{password}'
     credentials = base64.b64encode(credentials.encode()).decode()
@@ -43,6 +43,7 @@ def get_image(url='https://pgmwn8b5xu.meta.crosschain.computer',
     try:
         r = response.json()  
         image = Image.open(io.BytesIO(base64.b64decode(r['images'][0])))
+        image = image.resize((512,512))
     except Exception as e:
         print(e)
         raise Exception("Error getting image from diffusion model")
@@ -151,7 +152,7 @@ def generate_prompt():
     QualityAndDetail =["Highly Detailed", "UHD Quality", "Dreamlike Art", "3D Render", 
                              "Hard Surface Modeling", "Ultra Detailed Texture", "Surreal Imagery", 
                              "High Fidelity Graphics", "Dynamic Composition", "Cinematic Style"]
-    for trait in QualityAndDetail:
+    for trait in random.sample(QualityAndDetail,3):
         positive_prompt += ", " + trait
         positive_attributes.append({"trait_type": "Quality and Detail", "value": trait})
     negative_prompt = ""
@@ -187,8 +188,8 @@ def datanft(dataset_name = "chain_link_space6",
     dot_env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
     if not UI: load_dotenv(dot_env_path)
     POS_TEXT_PROMPT, positive_attributes_list, NEG_TEXT_PROMPT, negative_attributes_list = generate_prompt()
-    if DEBUG: print("Positive Prompt:", POS_TEXT_PROMPT)
-    if DEBUG: print("Negative Prompt:", NEG_TEXT_PROMPT)
+    print("Positive Prompt:", POS_TEXT_PROMPT)
+    print("Negative Prompt:", NEG_TEXT_PROMPT)
     lagrange_api_key = os.getenv("LAGRANGE_API_KEY")
     private_key = os.getenv("PRIVATE_KEY") 
     wallet_address = os.getenv("WALLET_ADDRESS")
