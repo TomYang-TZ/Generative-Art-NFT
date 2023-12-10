@@ -88,7 +88,7 @@ The core functionality of this application is encapsulated in the `datanft()` fu
 2. Using the `datanft()` Function:
    - Here's an example to illustrate the usage of `datanft()`:
      ```py
-      mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = datanft(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
+      mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = generateArtNFT(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
      )
      ```
      You can craft your own text prompts and create unique NFTs using Lagrange AI and Chainlink Functions
