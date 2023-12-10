@@ -414,7 +414,7 @@ def upload_img2lag(img_file_path,dataset_name,is_public):
         raise Exception("Error uploading file to LAG")
 
 def generate_prompt():
-    # Expanded positive traits library with a sci-fi and specific themes
+    # Generate a prompt for the diffusion model
     positive_prompt_pool = {
       "technology": [
         "Space Station", "Advanced Telescope", "Intergalactic Spacecraft", "Alien Observatory", 
@@ -422,21 +422,24 @@ def generate_prompt():
         "Nano Robots", "Time Machine", "Antimatter Reactor", "Orbital Habitat", "Deep Space Probe",
         "Dimensional Warp Machine", "Gravity Manipulator", "Interdimensional Portal", 
         "Cosmic Time Dial", "Asteroid Mining Rig", "Galactic Signal Array", 
-        "Quantum Entanglement Communicator", "Stellar Forge", "Virtual Reality Construct", "Nanobot Swarm"
+        "Quantum Entanglement Communicator", "Stellar Forge", "Virtual Reality Construct", "Nanobot Swarm",
+        "Starry Navigation System", "Orion's Belt Energy Harvester", "Pleiades Communication Network", "Andromeda Data Archive"
       ],
       "lighting": [
         "Stellar Glow", "Cosmic Ambient Light", "Supernova Explosion Light", "Bioluminescence", 
         "Auroral Light", "Reflection from Planetary Rings", "Laser Comms Beam", "Neutron Star Light", 
         "Dark Energy Glow", "Eclipse Shadow Light", "Quantum Light Echo", "Interstellar Aurora", 
         "Photon Storm Illumination", "Galactic Core Light", "Void Darkness Contrast", 
-        "Time-Space Warp Glow", "Cosmic Ray Shimmer", "Parallel Universe Light"
+        "Time-Space Warp Glow", "Cosmic Ray Shimmer", "Parallel Universe Light",
+        "Constellation Illumination Pattern", "Zodiacal Light Display", "Ursa Major Energy Emission", "Sirius Starlight Effect"
       ],
       "viewpoint": [
         "First Person View", "Aerial View", "View from a Spacecraft", "Telescope Zoom", 
         "Panoramic View", "Through an Alien's Eyes", "Microscopic Quantum Level", "Galactic Scale", 
         "Multiverse Perspective", "Inside a Black Hole", "Edge of the Universe", "Through a Wormhole", 
         "Dimensional Crossroads", "Nebula Core View", "Galactic Cluster Overview", 
-        "Inside a Quantum Computer", "Celestial Observatory", "Futuristic Megacity Skyline"
+        "Inside a Quantum Computer", "Celestial Observatory", "Futuristic Megacity Skyline",
+        "Observing from a Constellation", "Milky Way Edge Perspective", "Through the Lens of Cassiopeia", "View from the Star Cluster"
       ],
       "colorScheme": [
         "Galactic Blues and Purples", "Nebula Reds and Oranges", "Cold Space Grays", 
@@ -444,47 +447,54 @@ def generate_prompt():
         "Quantum Fluctuation Hues", "Supernova Spectrum", "Dark Matter Shades", "Intergalactic Neon Spectrum", 
         "Quantum Superposition Colors", "Void and Star Contrast", "Exotic Alien Flora Colors", 
         "Dimensional Transition Shades", "Supernatural Aurora Palette", "Cosmic Dust Hues", 
-        "Galactic Sunrise Tones", "Stellar Collapse Colors"
+        "Galactic Sunrise Tones", "Stellar Collapse Colors",
+        "Celestial Constellation Hues", "Orion Nebula Color Palette", "Galactic Cluster Spectrum", "Andromedan Sky Tones"
       ],
       "SciFiObject": [
         "Futuristic Military Cyborg", "Advanced Spacecraft", "Alien Technology", "Interstellar Station", 
         "Quantum Device", "Extraterrestrial Artifact", "Robotic Drone", "Energy Shield", "Space Elevator", 
         "Artificial Moon", "Dimensional Key", "Cosmic Compass", "Galactic Atlas", "Stellar Map", 
-        "Quantum Lock", "Time Continuum Navigator", "Celestial Codex", "Alien Energy Core", "Starforge Hammer"
+        "Quantum Lock", "Time Continuum Navigator", "Celestial Codex", "Alien Energy Core", "Starforge Hammer",
+        "Celestial Star Mapper", "Galaxy Pattern Decoder", "Constellation Energy Converter", "Orbiting Star Observatory"
       ],
       "SciFiEnvironment": [
         "Dystopian City", "Cyberpunk Streets", "Futuristic Metropolis", "Interstellar Space", 
         "Alien Landscape", "High-Tech Laboratory", "Underground Colony", "Orbital Habitat", 
         "Virtual Reality Landscape", "Parallel Universe", "Quantum Realm", "Galactic Library", 
         "Time Warp Field", "Dimensional Nexus", "Celestial Garden", "Orbiting Observatory", 
-        "Interdimensional Marketplace", "Quantum Field Laboratory", "Alien Sanctuary"
+        "Interdimensional Marketplace", "Quantum Field Laboratory", "Alien Sanctuary",
+        "Nebular Star Nursery", "Orion Arm Outpost", "Celestial Field Observatory", "Galactic Way Station"
       ],
       "SciFiPhenomena": [
         "Wormhole Travel", "Artificial Intelligence Uprising", "Galactic Federation", "Time Paradox", 
         "Quantum Anomalies", "Virtual Reality Worlds", "Alien Invasion", "Space-Time Continuum", 
         "Singularity Event", "Cosmic Storm", "Dimensional Rift", "Celestial Alignment", 
         "Quantum Entanglement Event", "Stellar Rebirth", "Galactic Convergence", "Time Loop Anomaly", 
-        "Cosmic Mirage", "Nebula Awakening", "Void Storm"
+        "Cosmic Mirage", "Nebula Awakening", "Void Storm",
+        "Constellation Formation Event", "Supernova in Orion", "Galactic Alignment", "Cosmic Constellation Shift"
       ],
       "SciFiTechnology": [
         "Teleportation Gates", "Nano Tech", "Cybernetic Enhancements", "Fusion Reactors", 
         "Artificial Gravity", "Holographic Displays", "Laser Weapons", "Antimatter Bomb", 
         "Cloaking Device", "Brain-Computer Interface", "Quantum Encryption Device", "Stellar Engine", 
         "Dimensional Stabilizer", "Celestial Navigator", "Galactic Beacon", "Time Dilation Field", 
-        "Quantum Resonator", "Galactic Translator", "Star Map Projector"
+        "Quantum Resonator", "Galactic Translator", "Star Map Projector",
+        "Stellar Constellation Analyzer", "Galactic Coordinate System", "Orion's Belt Locator", "Celestial Sphere Projector"
       ],
       "LightingAndEffects": [
         "Neon Lights", "Volumetric Lighting", "Ambient Light", "Real-Time VFX", "Digital 3D Effects", 
         "HDR Lighting", "Bioluminescent Glow", "Plasma Energy", "Strobe Effects", "Quantum Flare", 
         "Quantum Light Spectrum", "Stellar Reflections", "Galactic Core Lighting", "Void Darkness Effect", 
         "Supernova Light Echo", "Wormhole Illumination", "Dimensional Light Shift", "Celestial Glow", 
-        "Stellar Flare Effect"
+        "Stellar Flare Effect",
+        "Constellation Glow Effect", "Starry Sky Ambient Lighting", "Galactic Core Constellation Reflection", "Pulsar Light Pattern"
       ],
       "CharacterAndDesign": [
         "Cyberpunk Character", "Stealth Warframe", "Armored Warrior", "Smooth and Detailed Face", 
         "Intricate Details", "Symmetrical Design", "Alien Life Form", "Mechanical Exoskeleton", 
         "Virtual Avatar", "Augmented Human", "Quantum Explorer", "Galactic Wanderer", "Dimensional Traveler", 
-        "Celestial Guardian", "Stellar Mage", "Quantum Entity", "Galactic Diplomat", "Time Traveler", "Alien Mystic"
+        "Celestial Guardian", "Stellar Mage", "Quantum Entity", "Galactic Diplomat", "Time Traveler", "Alien Mystic",
+        "Constellation-Inspired Character", "Star Patterned Armor", "Celestial Being", "Astronomical Explorer"
       ]
     }
 
@@ -495,13 +505,15 @@ def generate_prompt():
         "Cropped Head", "Cartoon", "Anime", "Overexposed", "Underexposed", "Unnatural Poses", 
         "Cluttered Composition", "Disproportionate Limbs", "Overly Symmetrical Faces", 
         "Inconsistent Shadows", "Mismatched Perspectives", "Incoherent Textures", "Floating Objects", 
-        "Disconnected Elements", "Impossible Proportions", "Inconsistent Light Sources"
+        "Disconnected Elements", "Impossible Proportions", "Inconsistent Light Sources",
+        "Misshapen Constellations", "Inaccurate Star Patterns", "Unrealistic Astronomical Features"
       ],
       "AvoidArtStyles": [
         "Digital Painting", "Anime Style", "Cartoon Style", "Low-Quality Artwork", "Watermarked Images", 
         "Signature", "Abstract Art", "Minimalist Art", "Impressionist Art", "Surreal Art", "Photorealistic Style", 
         "Graffiti Art", "Baroque Style", "Rococo Style", "Futurist Art", "Dada Art", "Expressionist Art", 
-        "Art Nouveau Style", "Renaissance Style"
+        "Art Nouveau Style", "Renaissance Style",
+        "Non-Realistic Depictions of Space", "Overly Abstract Constellations", "Unscientific Stellar Representations"
       ],
       "AvoidScenes": [
         "Portrait of a Girl", "Face Close Up", "Pointy Ears", "Dress", "Half-Closed Eyes", "Jewelry", 
@@ -509,14 +521,16 @@ def generate_prompt():
         "Braid", "Grey Hair", "Long Eyelashes", "Elf", "Crowded Scenes", "Busy Cityscapes", "Ordinary Daily Life", 
         "Unrelated Object Juxtaposition", "Incongruent Scene Elements", "Out-of-Place Historical Settings", 
         "Inappropriate Seasonal Settings", "Mismatched Cultural Elements", "Contradictory Architectural Styles", 
-        "Inconsistent Time Periods", "Irrelevant Background Activity", "Disjointed Narrative Elements"
+        "Inconsistent Time Periods", "Irrelevant Background Activity", "Disjointed Narrative Elements",
+        "Incorrect Astronomical Positions", "Fantasy Constellations", "Unrealistic Star Formations"
       ],
       "SpecificAvoidances": [
         "Curvy", "Plump", "Fat", "Muscular Female", "3D Face", "Cropped", "Detailed Realistic Human Spaceman", 
         "Working on Mars", "Everyday Clothing", "Modern Day Technology", "Contemporary Vehicles", 
         "Realistic Animals", "Typical Office Environments", "Overly Glossy Surfaces", "Excessive Shadowing", 
         "Unrealistic Skin Tones", "Overemphasized Textures", "Anachronistic Elements", "Unrelated Genre Mixes", 
-        "Clashing Color Schemes", "Incongruous Scale Differences", "Unnatural"
+        "Clashing Color Schemes", "Incongruous Scale Differences", "Unnatural",
+        "Inaccurate Star Maps", "Non-Realistic Celestial Bodies", "Fictitious Star Systems"
       ]
     }
 
@@ -560,7 +574,7 @@ def generate_prompt():
         negative_attributes.append({"trait_type": "Technical Avoidances", "value": trait})
     return positive_prompt, positive_attributes, negative_prompt, negative_attributes
 
-def datanft(dataset_name = "chain_link_space6",
+def datanft(dataset_name = "dataNFT",
             POS_TEXT_PROMPT = "mountain, river, tree, cats",
             NEG_TEXT_PROMPT = 'violent',
             SPACE_UUID = "9f62111c-16aa-4111-bb24-e66b9923b0d0",
@@ -663,11 +677,11 @@ def datanft(dataset_name = "chain_link_space6",
         break
       time.sleep(10)
       now = time.time()
-      # if the time to create datanft is more than 2 minutes, break
-      if now - start > 120:
+      # if the time to get a metadata url is more than 3 minutes, break
+      if now - start > 180:
           print("Time out")
           os.remove(img_path)
-          raise Exception("Time out")
+          raise Exception("Time out when generating a metadata url")
 
     nonce = web3.eth.getTransactionCount(account_address)
     # mint NFT
