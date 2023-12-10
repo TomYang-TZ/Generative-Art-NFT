@@ -9,12 +9,344 @@ import uuid
 
 from PIL import Image
 from dotenv import load_dotenv
+from web3 import HTTPProvider, Web3, Account
+from web3.middleware import geth_poa_middleware
 
 from swan_lag.api_client import APIClient
 from swan_lag.api.lag_client import LagAPI
 
 DEBUG = False
 
+abi = '''[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "sourceCode",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "donId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "nftCollection",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "EmptyArgs",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EmptySource",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoInlineSecrets",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OnlyRouterCanFulfill",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "requestId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "UnexpectedRequestID",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      }
+    ],
+    "name": "RequestFulfilled",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      }
+    ],
+    "name": "RequestSent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "requestId",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "response",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "err",
+        "type": "bytes"
+      }
+    ],
+    "name": "Response",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "getResult",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "requestId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "response",
+        "type": "bytes"
+      },
+      {
+        "internalType": "bytes",
+        "name": "err",
+        "type": "bytes"
+      }
+    ],
+    "name": "handleOracleFulfillment",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "mintable",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "nameToId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nftContract",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "recipient",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "result",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "s_lastError",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "s_lastRequestId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "s_lastResponse",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "desc",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "image_url",
+        "type": "string"
+      }
+    ],
+    "name": "sendRequest",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "requestId",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "source",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]'''
 def get_image(url='https://pgmwn8b5xu.meta.crosschain.computer',
               username='admin',password='admin1234',
               prompt='a green apple',negative_prompt='violent',
@@ -84,59 +416,110 @@ def upload_img2lag(img_file_path,dataset_name,is_public):
 def generate_prompt():
     # Expanded positive traits library with a sci-fi and specific themes
     positive_prompt_pool = {
-        "technology": ["Space Station", "Advanced Telescope", "Intergalactic Spacecraft", 
-                       "Alien Observatory", "Quantum Computer", "Hyperspace Engine", 
-                       "Teleportation Device", "Force Field Generator", "Nano Robots", "Time Machine", 
-                       "Antimatter Reactor", "Orbital Habitat", "Deep Space Probe"],
-        "lighting": ["Stellar Glow", "Cosmic Ambient Light", "Supernova Explosion Light", 
-                     "Bioluminescence", "Auroral Light", "Reflection from Planetary Rings", 
-                     "Laser Comms Beam", "Neutron Star Light", "Dark Energy Glow"],
-        "viewpoint": ["First Person View", "Aerial View", "View from a Spacecraft", 
-                      "Telescope Zoom", "Panoramic View", "Through an Alien's Eyes", 
-                      "Microscopic Quantum Level", "Galactic Scale", "Multiverse Perspective"],
-        "colorScheme": ["Galactic Blues and Purples", "Nebula Reds and Oranges", 
-                        "Cold Space Grays", "Warm Planetary Yellows and Greens", 
-                        "Alien Planet Pastels", "Black Hole Black and White", 
-                        "Quantum Fluctuation Hues", "Supernova Spectrum", "Dark Matter Shades"],
-        "SciFiObject": ["Futuristic Military Cyborg", "Advanced Spacecraft", "Alien Technology", 
-                        "Interstellar Station", "Quantum Device", "Extraterrestrial Artifact", 
-                        "Robotic Drone", "Energy Shield", "Space Elevator", "Artificial Moon"],
-        "SciFiEnvironment": ["Dystopian City", "Cyberpunk Streets", "Futuristic Metropolis", 
-                             "Interstellar Space", "Alien Landscape", "High-Tech Laboratory", 
-                             "Underground Colony", "Orbital Habitat", "Virtual Reality Landscape", 
-                             "Parallel Universe"],
-        "SciFiPhenomena": ["Wormhole Travel", "Artificial Intelligence Uprising", 
-                           "Galactic Federation", "Time Paradox", "Quantum Anomalies", 
-                           "Virtual Reality Worlds", "Alien Invasion", "Space-Time Continuum", 
-                           "Singularity Event", "Cosmic Storm"],
-        "SciFiTechnology": ["Teleportation Gates", "Nano Tech", "Cybernetic Enhancements", 
-                            "Fusion Reactors", "Artificial Gravity", "Holographic Displays", 
-                            "Laser Weapons", "Antimatter Bomb", "Cloaking Device", "Brain-Computer Interface"],
-        "LightingAndEffects": ["Neon Lights", "Volumetric Lighting", "Ambient Light", 
-                               "Real-Time VFX", "Digital 3D Effects", "HDR Lighting", 
-                               "Bioluminescent Glow", "Plasma Energy", "Strobe Effects", "Quantum Flare"],
-        "CharacterAndDesign": ["Cyberpunk Character", "Stealth Warframe", "Armored Warrior", 
-                               "Smooth and Detailed Face", "Intricate Details", "Symmetrical Design", 
-                               "Alien Life Form", "Mechanical Exoskeleton", "Virtual Avatar", "Augmented Human"]
+      "technology": [
+        "Space Station", "Advanced Telescope", "Intergalactic Spacecraft", "Alien Observatory", 
+        "Quantum Computer", "Hyperspace Engine", "Teleportation Device", "Force Field Generator", 
+        "Nano Robots", "Time Machine", "Antimatter Reactor", "Orbital Habitat", "Deep Space Probe",
+        "Dimensional Warp Machine", "Gravity Manipulator", "Interdimensional Portal", 
+        "Cosmic Time Dial", "Asteroid Mining Rig", "Galactic Signal Array", 
+        "Quantum Entanglement Communicator", "Stellar Forge", "Virtual Reality Construct", "Nanobot Swarm"
+      ],
+      "lighting": [
+        "Stellar Glow", "Cosmic Ambient Light", "Supernova Explosion Light", "Bioluminescence", 
+        "Auroral Light", "Reflection from Planetary Rings", "Laser Comms Beam", "Neutron Star Light", 
+        "Dark Energy Glow", "Eclipse Shadow Light", "Quantum Light Echo", "Interstellar Aurora", 
+        "Photon Storm Illumination", "Galactic Core Light", "Void Darkness Contrast", 
+        "Time-Space Warp Glow", "Cosmic Ray Shimmer", "Parallel Universe Light"
+      ],
+      "viewpoint": [
+        "First Person View", "Aerial View", "View from a Spacecraft", "Telescope Zoom", 
+        "Panoramic View", "Through an Alien's Eyes", "Microscopic Quantum Level", "Galactic Scale", 
+        "Multiverse Perspective", "Inside a Black Hole", "Edge of the Universe", "Through a Wormhole", 
+        "Dimensional Crossroads", "Nebula Core View", "Galactic Cluster Overview", 
+        "Inside a Quantum Computer", "Celestial Observatory", "Futuristic Megacity Skyline"
+      ],
+      "colorScheme": [
+        "Galactic Blues and Purples", "Nebula Reds and Oranges", "Cold Space Grays", 
+        "Warm Planetary Yellows and Greens", "Alien Planet Pastels", "Black Hole Black and White", 
+        "Quantum Fluctuation Hues", "Supernova Spectrum", "Dark Matter Shades", "Intergalactic Neon Spectrum", 
+        "Quantum Superposition Colors", "Void and Star Contrast", "Exotic Alien Flora Colors", 
+        "Dimensional Transition Shades", "Supernatural Aurora Palette", "Cosmic Dust Hues", 
+        "Galactic Sunrise Tones", "Stellar Collapse Colors"
+      ],
+      "SciFiObject": [
+        "Futuristic Military Cyborg", "Advanced Spacecraft", "Alien Technology", "Interstellar Station", 
+        "Quantum Device", "Extraterrestrial Artifact", "Robotic Drone", "Energy Shield", "Space Elevator", 
+        "Artificial Moon", "Dimensional Key", "Cosmic Compass", "Galactic Atlas", "Stellar Map", 
+        "Quantum Lock", "Time Continuum Navigator", "Celestial Codex", "Alien Energy Core", "Starforge Hammer"
+      ],
+      "SciFiEnvironment": [
+        "Dystopian City", "Cyberpunk Streets", "Futuristic Metropolis", "Interstellar Space", 
+        "Alien Landscape", "High-Tech Laboratory", "Underground Colony", "Orbital Habitat", 
+        "Virtual Reality Landscape", "Parallel Universe", "Quantum Realm", "Galactic Library", 
+        "Time Warp Field", "Dimensional Nexus", "Celestial Garden", "Orbiting Observatory", 
+        "Interdimensional Marketplace", "Quantum Field Laboratory", "Alien Sanctuary"
+      ],
+      "SciFiPhenomena": [
+        "Wormhole Travel", "Artificial Intelligence Uprising", "Galactic Federation", "Time Paradox", 
+        "Quantum Anomalies", "Virtual Reality Worlds", "Alien Invasion", "Space-Time Continuum", 
+        "Singularity Event", "Cosmic Storm", "Dimensional Rift", "Celestial Alignment", 
+        "Quantum Entanglement Event", "Stellar Rebirth", "Galactic Convergence", "Time Loop Anomaly", 
+        "Cosmic Mirage", "Nebula Awakening", "Void Storm"
+      ],
+      "SciFiTechnology": [
+        "Teleportation Gates", "Nano Tech", "Cybernetic Enhancements", "Fusion Reactors", 
+        "Artificial Gravity", "Holographic Displays", "Laser Weapons", "Antimatter Bomb", 
+        "Cloaking Device", "Brain-Computer Interface", "Quantum Encryption Device", "Stellar Engine", 
+        "Dimensional Stabilizer", "Celestial Navigator", "Galactic Beacon", "Time Dilation Field", 
+        "Quantum Resonator", "Galactic Translator", "Star Map Projector"
+      ],
+      "LightingAndEffects": [
+        "Neon Lights", "Volumetric Lighting", "Ambient Light", "Real-Time VFX", "Digital 3D Effects", 
+        "HDR Lighting", "Bioluminescent Glow", "Plasma Energy", "Strobe Effects", "Quantum Flare", 
+        "Quantum Light Spectrum", "Stellar Reflections", "Galactic Core Lighting", "Void Darkness Effect", 
+        "Supernova Light Echo", "Wormhole Illumination", "Dimensional Light Shift", "Celestial Glow", 
+        "Stellar Flare Effect"
+      ],
+      "CharacterAndDesign": [
+        "Cyberpunk Character", "Stealth Warframe", "Armored Warrior", "Smooth and Detailed Face", 
+        "Intricate Details", "Symmetrical Design", "Alien Life Form", "Mechanical Exoskeleton", 
+        "Virtual Avatar", "Augmented Human", "Quantum Explorer", "Galactic Wanderer", "Dimensional Traveler", 
+        "Celestial Guardian", "Stellar Mage", "Quantum Entity", "Galactic Diplomat", "Time Traveler", "Alien Mystic"
+      ]
     }
 
-    negative_prompt_pool = {
-        "AvoidFeatures": ["Mouth", "Ears", "Holes", "Out of Frame", "Bad Art", "Blurry", 
-                          "Bad Proportions", "Gross Proportions", "Duplicate", "Bad Anatomy", 
-                          "Deformed", "Ugly", "Long Neck", "Cropped Head", "Cartoon", "Anime", 
-                          "Overexposed", "Underexposed", "Unnatural Poses", "Cluttered Composition"],
-        "AvoidArtStyles": ["Digital Painting", "Anime Style", "Cartoon Style", 
-                           "Low-Quality Artwork", "Watermarked Images", "Signature", 
-                           "Abstract Art", "Minimalist Art", "Impressionist Art", "Surreal Art"],
-        "AvoidScenes": ["Portrait of a Girl", "Face Close Up", "Pointy Ears", "Dress", 
-                        "Half-Closed Eyes", "Jewelry", "Sitting", "Strapless Dress", "Breasts", 
-                        "Bare Shoulders", "Tiara", "Cleavage", "Long Hair", "Braid", "Grey Hair", 
-                        "Long Eyelashes", "Elf", "Crowded Scenes", "Busy Cityscapes", "Ordinary Daily Life"],
-        "SpecificAvoidances": ["Curvy", "Plump", "Fat", "Muscular Female", "3D Face", "Cropped", 
-                               "Detailed Realistic Human Spaceman", "Working on Mars", 
-                               "Everyday Clothing", "Modern Day Technology", "Contemporary Vehicles", 
-                               "Realistic Animals", "Typical Office Environments"]
+    negative_prompt_pool={
+      "AvoidFeatures": [
+        "Mouth", "Ears", "Holes", "Out of Frame", "Bad Art", "Blurry", "Bad Proportions", 
+        "Gross Proportions", "Duplicate", "Bad Anatomy", "Deformed", "Ugly", "Long Neck", 
+        "Cropped Head", "Cartoon", "Anime", "Overexposed", "Underexposed", "Unnatural Poses", 
+        "Cluttered Composition", "Disproportionate Limbs", "Overly Symmetrical Faces", 
+        "Inconsistent Shadows", "Mismatched Perspectives", "Incoherent Textures", "Floating Objects", 
+        "Disconnected Elements", "Impossible Proportions", "Inconsistent Light Sources"
+      ],
+      "AvoidArtStyles": [
+        "Digital Painting", "Anime Style", "Cartoon Style", "Low-Quality Artwork", "Watermarked Images", 
+        "Signature", "Abstract Art", "Minimalist Art", "Impressionist Art", "Surreal Art", "Photorealistic Style", 
+        "Graffiti Art", "Baroque Style", "Rococo Style", "Futurist Art", "Dada Art", "Expressionist Art", 
+        "Art Nouveau Style", "Renaissance Style"
+      ],
+      "AvoidScenes": [
+        "Portrait of a Girl", "Face Close Up", "Pointy Ears", "Dress", "Half-Closed Eyes", "Jewelry", 
+        "Sitting", "Strapless Dress", "Breasts", "Bare Shoulders", "Tiara", "Cleavage", "Long Hair", 
+        "Braid", "Grey Hair", "Long Eyelashes", "Elf", "Crowded Scenes", "Busy Cityscapes", "Ordinary Daily Life", 
+        "Unrelated Object Juxtaposition", "Incongruent Scene Elements", "Out-of-Place Historical Settings", 
+        "Inappropriate Seasonal Settings", "Mismatched Cultural Elements", "Contradictory Architectural Styles", 
+        "Inconsistent Time Periods", "Irrelevant Background Activity", "Disjointed Narrative Elements"
+      ],
+      "SpecificAvoidances": [
+        "Curvy", "Plump", "Fat", "Muscular Female", "3D Face", "Cropped", "Detailed Realistic Human Spaceman", 
+        "Working on Mars", "Everyday Clothing", "Modern Day Technology", "Contemporary Vehicles", 
+        "Realistic Animals", "Typical Office Environments", "Overly Glossy Surfaces", "Excessive Shadowing", 
+        "Unrealistic Skin Tones", "Overemphasized Textures", "Anachronistic Elements", "Unrelated Genre Mixes", 
+        "Clashing Color Schemes", "Incongruous Scale Differences", "Unnatural"
+      ]
     }
+
 
     positive_prompt = ""
     positive_attributes = []
@@ -183,11 +566,11 @@ def datanft(dataset_name = "chain_link_space6",
             SPACE_UUID = "9f62111c-16aa-4111-bb24-e66b9923b0d0",
             SEED = -1,
             UI=False):
-    global lagrange_api_key,private_key,wallet_address,mumbai_rpc,api_client,lag_client,chain_id
+    global lagrange_api_key,private_key,wallet_address,mumbai_rpc,api_client,lag_client,chain_id,abi
     
     dot_env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
     if not UI: load_dotenv(dot_env_path)
-    POS_TEXT_PROMPT, positive_attributes_list, NEG_TEXT_PROMPT, negative_attributes_list = generate_prompt()
+    
     print("Positive Prompt:", POS_TEXT_PROMPT)
     print("Negative Prompt:", NEG_TEXT_PROMPT)
     lagrange_api_key = os.getenv("LAGRANGE_API_KEY")
@@ -230,57 +613,139 @@ def datanft(dataset_name = "chain_link_space6",
     
     # Now we can create a data NFT
     print("Creating data NFT")
-    res = lag_client.data_nft_request(chain_id,wallet_address,dataset_name)
-    start = time.time()
-    print("Waiting for data NFT to be created")
-    while True:
-        res = lag_client.try_claim_data_nft(wallet_address,dataset_name)
-        if DEBUG:print(res)
-        claimable = 'not claimable' not in res['message']
-        res = lag_client.get_data_nft_info(wallet_address,dataset_name)
-        if DEBUG:print(res)
-        nft = res['data']['nft']
-        contract_address = nft['contract_address']
-        
-        if contract_address and claimable: break
-        if contract_address and not claimable: 
-            print("Not claimable")
-            break
-        
-        time.sleep(10)
-        now = time.time()
-        # if the time to create datanft is more than 2 minutes, break
-        if now - start > 120:
-            print("Time out")
-            raise Exception("Time out")
-    if claimable: 
-        print("Data NFT claimable")
-        
-        # print("Data NFT contract address: ",contract_address)
+    # Connecting to Mumbai Testnet
+    web3 = Web3(Web3.HTTPProvider(mumbai_rpc))
+    web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+    # check connection
+    if not web3.isConnected():
+        print("Failed to connect to Mumbai testnet.")
+    else:
+        print("Connected to Mumbai testnet.")
+
+    # account info
+    account_address = wallet_address
+    private_key = private_key
     
-    # Finally we create a dataset license
-    res = lag_client.create_dataset_license(wallet_address,dataset_name,contract_address,chain_id,wallet_address)
-    if res['status'] != 'success':
-        raise Exception("Error creating dataset license")
-    print("Dataset license created")
-    # license_contract_address = res['data']['contract_address']
-    license_ipfs_uri = res['data']['ipfs_uri']
-    license_mint_hash = res['data']['mint_hash']
-    if DEBUG: print(res)
+    # construct contract instance
+    contract_address = "0x5726315fcA395777423Ed13FAc6900b890666780"
+    contract = web3.eth.contract(address=contract_address, abi=abi)
+
+    # Data to be sent to the contract
+    name = img_name
+    description = POS_TEXT_PROMPT + '\n' + NEG_TEXT_PROMPT
+    image_url = img_link
+    
+    # Construct transaction
+    nonce = web3.eth.getTransactionCount(account_address)
+    transaction = contract.functions.sendRequest(name, description, image_url).buildTransaction({
+        'chainId': 80001,  # Mumbai testnet chainId is 80001
+        'gas': 2000000,  # Set up appropriate gas limit
+        'gasPrice': web3.toWei('50', 'gwei'),
+        'nonce': nonce,
+    })
+
+    # sign transaction
+    signed_tx = web3.eth.account.sign_transaction(transaction, private_key)
+
+    # send transaction
+    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+
+    # print transaction hash
+    print(f"Contract Transaction hash: {web3.toHex(tx_hash)}")
+
+    # qeury chainlink Function status
+    start = time.time()
+    while True:
+      result = contract.functions.getResult(name).call()
+      if result != "" and "https://" in result:
+        print(result)
+        break
+      time.sleep(10)
+      now = time.time()
+      # if the time to create datanft is more than 2 minutes, break
+      if now - start > 120:
+          print("Time out")
+          os.remove(img_path)
+          raise Exception("Time out")
+
+    nonce = web3.eth.getTransactionCount(account_address)
+    # mint NFT
+    mint = contract.functions.mint(name).buildTransaction({
+      'chainId': 80001,  # Mumbai testnet chainId 是 80001
+        'gas': 2000000,  # set up  appropriate 的gas limit
+        'gasPrice': web3.toWei('50', 'gwei'),
+        'nonce': nonce,
+    })
+    print(mint)
+    
+    # sign mint
+    signed_tx = web3.eth.account.sign_transaction(mint, private_key)
+
+    # send mint
+    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+    mint_hash = web3.toHex(tx_hash)
+    print("mint transaction hash: ", mint_hash)
     
     os.remove(img_path)
     dataset_address = f"https://testnet.lagrangedao.org/datasets/{wallet_address}/{dataset_name}/files"
+    collection_address = "https://testnets.opensea.io/collection/swan-chainlink"
+    nft_contract_address = "0x046376Ae243f53612a6118993759F9BbB1Bc9257"
     
-    return img_link,contract_address,dataset_address,license_ipfs_uri,license_mint_hash
+    return img_link,contract_address,nft_contract_address,dataset_address,mint_hash
+    
+    # res = lag_client.data_nft_request(chain_id,wallet_address,dataset_name)
+    # start = time.time()
+    # print("Waiting for data NFT to be created")
+    # while True:
+    #     res = lag_client.try_claim_data_nft(wallet_address,dataset_name)
+    #     if DEBUG:print(res)
+    #     claimable = 'not claimable' not in res['message']
+    #     res = lag_client.get_data_nft_info(wallet_address,dataset_name)
+    #     if DEBUG:print(res)
+    #     nft = res['data']['nft']
+    #     contract_address = nft['contract_address']
+        
+    #     if contract_address and claimable: break
+    #     if contract_address and not claimable: 
+    #         print("Not claimable")
+    #         break
+        
+    #     time.sleep(10)
+    #     now = time.time()
+    #     # if the time to create datanft is more than 2 minutes, break
+    #     if now - start > 120:
+    #         print("Time out")
+    #         raise Exception("Time out")
+    # if claimable: 
+    #     print("Data NFT claimable")
+        
+    #     # print("Data NFT contract address: ",contract_address)
+    
+    # # Finally we create a dataset license
+    # res = lag_client.create_dataset_license(wallet_address,dataset_name,contract_address,chain_id,wallet_address)
+    # if res['status'] != 'success':
+    #     raise Exception("Error creating dataset license")
+    # print("Dataset license created")
+    # # license_contract_address = res['data']['contract_address']
+    # license_ipfs_uri = res['data']['ipfs_uri']
+    # license_mint_hash = res['data']['mint_hash']
+    # if DEBUG: print(res)
+    
+    # os.remove(img_path)
+    # dataset_address = f"https://testnet.lagrangedao.org/datasets/{wallet_address}/{dataset_name}/files"
+    
+    # return img_link,contract_address,dataset_address,license_ipfs_uri,license_mint_hash
     
     
     
 if __name__ == "__main__":
     # Example usage
-    mcs_img_link,contract_address,dataset_address,license_ipfs_uri,license_mint_hash = datanft()
+    POS_TEXT_PROMPT, positive_attributes_list, NEG_TEXT_PROMPT, negative_attributes_list = generate_prompt()
+    mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = datanft(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
     print("MCS Image Link: ",mcs_img_link)
-    print("Contract address: ",contract_address)
-    # print("Dataset name: ",dataset_name)
-    print("Dataset license ipfs uri: ",license_ipfs_uri)
+    print("Chainlink Function Contract address: ",chainlink_function_contract_address)
+    print("NFT Contract address: ",nft_contract_address)
+    print("Dataset address: ",dataset_address)
     print("Dataset license transaction hash: ","https://mumbai.polygonscan.com/tx/" + license_mint_hash)
     
