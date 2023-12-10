@@ -69,11 +69,12 @@ document.getElementById('imageForm').addEventListener('submit', function(e) {
 
             // Add the hyperlinks
             var linksHtml = `
-                <p style="color:white">Contract Address: ${data.contract_address}</p>
+                <p style="color:white">Chainlink Function Contract Address: ${data.chain_link_fn_contract_address}</p>
+                <p style="color:white">NFT Contract Address: ${data.NFT_contract_address}</p>
                 <p><a style="color:white" a href="${data.dataset_address}" target="_blank">Dataset Link</a></p>
                 <p><a style="color:white" href="${data.mcs_img_link}" target="_blank">Image Link</a></p>
-                <p><a style="color:white" href="${data.license_ipfs_uri}" target="_blank">License IPFS URI</a></p>
                 <p><a style="color:white" href="https://mumbai.polygonscan.com/tx/${data.license_mint_hash}" target="_blank">Transaction Link</a></p>
+                <p><a style="color:white" href="${data.NFT_collection}" target="_blank">OpenSea NFT Marketplace</a></p>
             `;
 
             resultContainer.innerHTML += linksHtml;
