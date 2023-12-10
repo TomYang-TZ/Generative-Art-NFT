@@ -68,7 +68,7 @@ To run the application using Docker:
    The Dockerfile is located at `DataNFT-V2/Dockerfile`.
 
 ## NFT Campaign  
-To launch our NFT Campaign, which is themed around advanced technology, cosmic phenomena, and surreal sci-fi environments, we have crafted a comprehensive collection of both positive and negative text prompts. These prompts are systematically selected at random to ensure a diverse and captivating representation in our project. To modify and design your own campain, see [below](#setup)
+To launch our NFT Campaign, which is themed around constellation, advanced technology, cosmic phenomena, and surreal sci-fi environments, we have crafted a comprehensive collection of both positive and negative text prompts. These prompts are systematically selected at random to ensure a diverse and captivating representation in our project. To modify and design your own campain, see [below](#setup)
 
 ## For Developers
 
