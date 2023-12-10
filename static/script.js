@@ -74,7 +74,7 @@ document.getElementById('imageForm').addEventListener('submit', function(e) {
                 <p><a style="color:white" a href="${data.dataset_address}" target="_blank">Dataset Link</a></p>
                 <p><a style="color:white" href="${data.mcs_img_link}" target="_blank">Image Link</a></p>
                 <p><a style="color:white" href="https://mumbai.polygonscan.com/tx/${data.license_mint_hash}" target="_blank">Transaction Link</a></p>
-                <p><a style="color:white" href="${data.NFT_collection}" target="_blank">OpenSea NFT Marketplace</a></p>
+                <p><a style="color:white" href="${data.NFT_collection}" target="_blank">OpenSea Marketplace</a></p>
             `;
 
             resultContainer.innerHTML += linksHtml;

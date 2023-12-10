@@ -6,6 +6,7 @@ import io
 import base64
 import time
 import uuid
+import traceback
 
 from PIL import Image
 from dotenv import load_dotenv
@@ -598,6 +599,7 @@ def datanft(dataset_name = "dataNFT",
     
     # First, we need to retreive the link to the diffusion model hosted on a lagrange space through its space uuid
     SPACE_UUID = os.environ.get("SPACE_UUID")
+    print("Getting result uri from LAG")
     res = lag_client.get_result_uri_from_space_uuid(SPACE_UUID)
     if DEBUG: print(res)
     try:
@@ -607,106 +609,115 @@ def datanft(dataset_name = "dataNFT",
         raise Exception("Error getting url from LAG")
         
     # Then we can use the url to generate an image and upload it to the Lagrange dataset
-    
+    print("Generating image")
     image = get_image(prompt=POS_TEXT_PROMPT,negative_prompt=NEG_TEXT_PROMPT,url=url,seed=SEED)
     img_name = str(uuid.uuid4()) + ".png"
     img_path = f"{os.path.dirname(__file__)}/" + img_name
     image.save(img_path)
     if DEBUG:print(img_path)
-    upload_img2lag(img_path,dataset_name,1)
-    
-    # Next we upload the image to IPFS, to a bucket named DataNFT on MCS
-    
     try:
-        img_link = save_to_MCS_bucket(initialize_bucket=True,overwrite_file=True,
-                                  bucket_name='DataNFT',file_path=img_path,name=img_name)
-    except Exception as e:
-        print(str(e))
-        raise Exception("Error saving image to MCS bucket") 
-    # print("Image Link on MCS: ", img_link)
-    
-    # Now we can create a data NFT
-    print("Creating data NFT")
-    # Connecting to Mumbai Testnet
-    web3 = Web3(Web3.HTTPProvider(mumbai_rpc))
-    web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+      upload_img2lag(img_path,dataset_name,1)
+      
+      # Next we upload the image to IPFS, to your MCS bucket named Chainlink_NFT 
+      try:
+          img_link = save_to_MCS_bucket(initialize_bucket=True,overwrite_file=True,
+                                    bucket_name='Chainlink_NFT',file_path=img_path,name=img_name)
+      except Exception as e:
+          print(str(e))
+          raise Exception("Error saving image to MCS bucket") 
+      # print("Image Link on MCS: ", img_link)
+      
+      # Now we can create an NFT
+      print("Creating NFT")
+      # Connecting to Mumbai Testnet
+      web3 = Web3(Web3.HTTPProvider(mumbai_rpc))
+      web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
-    # check connection
-    if not web3.isConnected():
-        print("Failed to connect to Mumbai testnet.")
-    else:
-        print("Connected to Mumbai testnet.")
+      # check connection
+      if not web3.isConnected():
+          print("Failed to connect to Mumbai testnet.")
+      else:
+          print("Connected to Mumbai testnet.")
 
-    # account info
-    account_address = wallet_address
-    private_key = private_key
-    
-    # construct contract instance
-    contract_address = "0x5726315fcA395777423Ed13FAc6900b890666780"
-    contract = web3.eth.contract(address=contract_address, abi=abi)
+      # account info
+      account_address = wallet_address
+      private_key = private_key
+      
+      # construct contract instance
+      contract_address = "0x5726315fcA395777423Ed13FAc6900b890666780"
+      contract = web3.eth.contract(address=contract_address, abi=abi)
 
-    # Data to be sent to the contract
-    name = img_name
-    description = POS_TEXT_PROMPT + '\n' + NEG_TEXT_PROMPT
-    image_url = img_link
-    
-    # Construct transaction
-    nonce = web3.eth.getTransactionCount(account_address)
-    transaction = contract.functions.sendRequest(name, description, image_url).buildTransaction({
-        'chainId': 80001,  # Mumbai testnet chainId is 80001
-        'gas': 2000000,  # Set up appropriate gas limit
-        'gasPrice': web3.toWei('50', 'gwei'),
-        'nonce': nonce,
-    })
+      # Data to be sent to the contract
+      name = img_name
+      description = POS_TEXT_PROMPT + '\n' + NEG_TEXT_PROMPT
+      image_url = img_link
+      
+      # Construct transaction
+      nonce = web3.eth.getTransactionCount(account_address)
+      transaction = contract.functions.sendRequest(name, description, image_url).buildTransaction({
+          'chainId': 80001,  # Mumbai testnet chainId is 80001
+          'gas': 2000000,  # Set up appropriate gas limit
+          'gasPrice': web3.toWei('50', 'gwei'),
+          'nonce': nonce,
+      })
 
-    # sign transaction
-    signed_tx = web3.eth.account.sign_transaction(transaction, private_key)
+      # sign transaction
+      signed_tx = web3.eth.account.sign_transaction(transaction, private_key)
 
-    # send transaction
-    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+      # send transaction
+      tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
 
-    # print transaction hash
-    print(f"Contract Transaction hash: {web3.toHex(tx_hash)}")
+      # print transaction hash
+      print(f"Contract Transaction hash: {web3.toHex(tx_hash)}")
 
-    # qeury chainlink Function status
-    start = time.time()
-    while True:
-      result = contract.functions.getResult(name).call()
-      if result != "" and "https://" in result:
+      # qeury chainlink Function status
+      print("Waiting for Chainlink Function to finish")
+      start = time.time()
+      while True:
+        result = contract.functions.getResult(name).call()
         print(result)
-        break
-      time.sleep(10)
-      now = time.time()
-      # if the time to get a metadata url is more than 3 minutes, break
-      if now - start > 180:
-          print("Time out")
-          os.remove(img_path)
-          raise Exception("Time out when generating a metadata url")
+        if result != "" and "https://" in result:
+          print(result)
+          break
+        if result != "" and "https://" not in result:
+          raise Exception("An error occured when executing the Chainlink Function")
+        time.sleep(10)
+        now = time.time()
+        # if the time to get a metadata url is more than 2 minutes, break
+        if now - start > 120:
+            print("Time out")
+            raise Exception("Time out when generating a metadata url")
 
-    nonce = web3.eth.getTransactionCount(account_address)
-    # mint NFT
-    mint = contract.functions.mint(name).buildTransaction({
-      'chainId': 80001,  # Mumbai testnet chainId 是 80001
-        'gas': 2000000,  # set up  appropriate 的gas limit
-        'gasPrice': web3.toWei('50', 'gwei'),
-        'nonce': nonce,
-    })
-    print(mint)
-    
-    # sign transaction
-    signed_tx = web3.eth.account.sign_transaction(mint, private_key)
+      nonce = web3.eth.getTransactionCount(account_address)
+      # mint NFT
+      print("Minting NFT")
+      mint = contract.functions.mint(name).buildTransaction({
+        'chainId': 80001,  # Mumbai testnet chainId 是 80001
+          'gas': 2000000,  # set up  appropriate 的gas limit
+          'gasPrice': web3.toWei('50', 'gwei'),
+          'nonce': nonce,
+      })
+      if DEBUG: print(mint)
+      
+      # sign transaction
+      signed_tx = web3.eth.account.sign_transaction(mint, private_key)
 
-    # send transaction
-    tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
-    mint_hash = web3.toHex(tx_hash)
-    print("NFT transaction hash: ", mint_hash)
-    
-    os.remove(img_path)
-    dataset_address = f"https://testnet.lagrangedao.org/datasets/{wallet_address}/{dataset_name}/files"
-    collection_address = "https://testnets.opensea.io/collection/swan-chainlink"
-    nft_contract_address = "0x046376Ae243f53612a6118993759F9BbB1Bc9257"
-    
-    return img_link,contract_address,nft_contract_address,dataset_address,mint_hash
+      # send transaction
+      tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
+      mint_hash = web3.toHex(tx_hash)
+      print("NFT transaction hash: ", mint_hash)
+      
+      os.remove(img_path)
+      dataset_address = f"https://testnet.lagrangedao.org/datasets/{wallet_address}/{dataset_name}/files"
+      collection_address = "https://testnets.opensea.io/collection/swan-chainlink"
+      nft_contract_address = "0x046376Ae243f53612a6118993759F9BbB1Bc9257"
+      
+      return img_link,contract_address,nft_contract_address,dataset_address,mint_hash
+    except Exception as e:
+      traceback.print_exc()
+      os.remove(img_path)
+      raise Exception(e)
+      
     
     # res = lag_client.data_nft_request(chain_id,wallet_address,dataset_name)
     # start = time.time()
