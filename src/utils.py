@@ -693,13 +693,13 @@ def datanft(dataset_name = "dataNFT",
     })
     print(mint)
     
-    # sign mint
+    # sign transaction
     signed_tx = web3.eth.account.sign_transaction(mint, private_key)
 
-    # send mint
+    # send transaction
     tx_hash = web3.eth.sendRawTransaction(signed_tx.rawTransaction)
     mint_hash = web3.toHex(tx_hash)
-    print("mint transaction hash: ", mint_hash)
+    print("NFT transaction hash: ", mint_hash)
     
     os.remove(img_path)
     dataset_address = f"https://testnet.lagrangedao.org/datasets/{wallet_address}/{dataset_name}/files"
