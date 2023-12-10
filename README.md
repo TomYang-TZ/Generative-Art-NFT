@@ -5,13 +5,14 @@
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmZKsSQ9WMSAtn1hw71Jr2DXVNnVsHvh8KS9s14JPEiJFc)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmWjVP4D2CS2oimANTv9KkxngFwcBDBRMyuZRnHTJFp5tF)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmXqov8MCyRx8BbHDSn4FHoL8zYztF856ZP4qafdiWTHHZ)
-![](https://a8ef60452885.acl.multichain.storage/ipfs/QmZLChaMMkveB6i1qdS5hGD5Ko49Hv2juiM2gyzfHzXjts)
+![](https://a8ef60452885.acl.multichain.storage/ipfs/QmdrxbZhqqEvxdJxjGGPqZQPWRgZmHSsh9UVm792WtvhRE?filename=9dc765db-a705-49df-aa04-6013ea286252.png)
+![](https://a8ef60452885.acl.multichain.storage/ipfs/QmUKfRNnNECdZpYhEhYbU9p4hbafK9tdUjnCcA3yeutiEy?filename=cf76663c-e987-48cb-a583-f85c6a94396b.png)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmWvDX1gP98wM4QJi4hdkDDb2HqDNxHZVzXxLXvwoTytCH)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmeyRegd2cKZNsC8dvBxc447rBrwgwZz7Wedw9fmU7w5Ta)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmaQ6wGJ4zPvyLnWZoDBrrxCSLooUdbed3rWufdRhPp2Zd)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmaP8dUtkjaevACwCSowxAcHzGZmTBYk2P2w41sKN3H5zS)
 
-### [OpenSea NFT Market Place](https://testnets.opensea.io/collection/swan-chainlink)
+### [OpenSea Market Place](https://testnets.opensea.io/collection/swan-chainlink)
 
 ## Description
 
@@ -36,7 +37,7 @@ conda create -n "VIRTUAL_ENV_NAME" python=3.9
 ```
 
 ## Usage
-
+Note that all our functions run locally, your information is not collected.
 ### Running Locally
 
 To run the DataNFT application locally:
@@ -81,6 +82,7 @@ The core functionality of this application is encapsulated in the `datanft()` fu
 1. API Configuration:
    - Create a `.env` file in the root directory.
    - Follow the template provided to set up your API keys and other configurations.
+   - Please remember to use your personal API token from your ***[Lagrange Testnet](https://testnet.lagrangedao.org/main)*** account as the Lagrange API key.
 
 2. Using the `datanft()` Function:
    - Here's an example to illustrate the usage of `datanft()`:
