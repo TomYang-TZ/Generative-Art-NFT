@@ -1,9 +1,10 @@
 import sys
 import os
 import json
+import traceback
 from flask import Flask, render_template, request, jsonify, Response
 sys.path.append(os.path.join('.','src'))  # Add the src folder to the Python path
-from src.utils import datanft  # Import the datanft function
+from src.utils import datanft,generate_prompt  # Import the datanft and prompt generation functions
 
 app = Flask(__name__)
 
@@ -39,27 +40,30 @@ def generate():
 
     # Call the datanft function from your utils.py
     try:
-            mcs_img_link, contract_address, dataset_address,license_ipfs_uri, license_mint_hash = datanft(
-                dataset_name, space_uuid, SEED=-1, UI=True
+            POS_TEXT_PROMPT, positive_attributes_list, NEG_TEXT_PROMPT, negative_attributes_list = generate_prompt()
+            mcs_img_link, chainlink_function_contract_address, contract_address, dataset_address, license_mint_hash = datanft(
+                dataset_name=dataset_name, SPACE_UUID=space_uuid, SEED=-1, UI=True, POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT,
             )
             print({
                 'mcs_img_link': mcs_img_link,
-                'contract_address': contract_address,
+                'chain_link_fn_contract_address':chainlink_function_contract_address,
+                'NFT_contract_address': contract_address,
                 'dataset_address': dataset_address,
-                'license_ipfs_uri': license_ipfs_uri,
-                'license_mint_hash': license_mint_hash
+                'license_mint_hash': license_mint_hash,
+                'NFT_collection': "https://testnets.opensea.io/collection/swan-chainlink"
             })
             return jsonify({
                 'mcs_img_link': mcs_img_link,
-                'contract_address': contract_address,
+                'chain_link_fn_contract_address':chainlink_function_contract_address,
+                'NFT_contract_address': contract_address,
                 'dataset_address': dataset_address,
-                'license_ipfs_uri': license_ipfs_uri,
-                'license_mint_hash': license_mint_hash
+                'license_mint_hash': license_mint_hash,
+                'NFT_collection': "https://testnets.opensea.io/collection/swan-chainlink"
             })
         
         
     except Exception as e:
-        print(e)
+        traceback.print_exc()
         return jsonify({'error': str(e) + "\nCheck your environment variables and try again. If the problem persists, please contact us at tomyang@nbai.io"})
 
 if __name__ == '__main__':
