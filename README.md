@@ -41,11 +41,11 @@ chmod +x setup.sh
 Note that all our functions run locally, your information is not collected.
 ### Running Locally
 
-To run the DataNFT application locally:
+To run the application locally:
 
-1. Navigate to the `DataNFT-V2` folder:
+1. Navigate to the `Generative-Art-NFT` folder:
    ```bash
-   cd Generative-DataNFT 
+   cd Generative-Art-NFT 
    ```
 
 2. Start the Flask application:
@@ -59,15 +59,15 @@ To run the application using Docker:
 
 1. Build the Docker image:
    ```bash
-   docker build -t datanft-app .
+   docker build -t generateArtNFT-app .
    ```
 
 2. Run the Docker container:
    ```bash
-   docker run -p 5000:5000 datanft-app # Remember to change the exposed port in the Dockerfile accordingly
+   docker run -p 5000:5000 generateArtNFT-app # Remember to change the exposed port in the Dockerfile accordingly
    ```
 
-   The Dockerfile is located at `DataNFT-V2/Dockerfile`.
+   The Dockerfile is located at `Generative-Art-NFT/Dockerfile`.
 
 ## NFT Campaign  
 To launch our NFT Campaign, which is themed around constellation, advanced technology, cosmic phenomena, and surreal sci-fi environments, we have crafted a comprehensive collection of both positive and negative text prompts. These prompts are systematically selected at random to ensure a diverse and captivating representation in our project. To modify and design your own campain, see [below](#setup)
@@ -76,7 +76,7 @@ To launch our NFT Campaign, which is themed around constellation, advanced techn
 
 ### Core Function
 
-The core functionality of this application is encapsulated in the `datanft()` function, which can be found in `src/utils.py`.
+The core functionality of this application is encapsulated in the `generateArtNFT()` function, which can be found in `src/utils.py`.
 
 ### Setup
 
@@ -85,8 +85,8 @@ The core functionality of this application is encapsulated in the `datanft()` fu
    - Follow the template provided to set up your API keys and other configurations.
    - Please remember to use your personal API token from your ***[Lagrange Testnet](https://testnet.lagrangedao.org/main)*** account as the Lagrange API key.
 
-2. Using the `datanft()` Function:
-   - Here's an example to illustrate the usage of `datanft()`:
+2. Using the `generateArtNFT()` Function:
+   - Here's an example to illustrate the usage of `generateArtNFT()`:
      ```py
       mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = generateArtNFT(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
      )
