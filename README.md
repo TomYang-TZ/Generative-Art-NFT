@@ -33,6 +33,7 @@ cd Generative-Art-NFT
 conda create -n "VIRTUAL_ENV_NAME" python=3.9
 
 # Run the setup script
+chmod +x setup.sh
 ./setup.sh
 ```
 
