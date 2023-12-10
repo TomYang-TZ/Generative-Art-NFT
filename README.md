@@ -11,6 +11,7 @@
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmaQ6wGJ4zPvyLnWZoDBrrxCSLooUdbed3rWufdRhPp2Zd)
 ![](https://a8ef60452885.acl.multichain.storage/ipfs/QmaP8dUtkjaevACwCSowxAcHzGZmTBYk2P2w41sKN3H5zS)
 
+### [OpenSea NFT Market Place](https://testnets.opensea.io/collection/swan-chainlink)
 
 ## Description
 
@@ -66,6 +67,9 @@ To run the application using Docker:
 
    The Dockerfile is located at `DataNFT-V2/Dockerfile`.
 
+## NFT Campaign  
+To launch our NFT Campaign, which is themed around advanced technology, cosmic phenomena, and surreal sci-fi environments, we have crafted a comprehensive collection of both positive and negative text prompts. These prompts are systematically selected at random to ensure a diverse and captivating representation in our project. To modify and design your own campain, see [below](#setup)
+
 ## For Developers
 
 ### Core Function
@@ -81,7 +85,7 @@ The core functionality of this application is encapsulated in the `datanft()` fu
 2. Using the `datanft()` Function:
    - Here's an example to illustrate the usage of `datanft()`:
      ```py
-     mcs_img_link, contract_address, dataset_address, license_ipfs_uri, license_mint_hash = datanft(
-         dataset_name, pos_text_prompt, neg_text_prompt, space_uuid, seed
+      mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = datanft(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
      )
      ```
+     You can craft your own text prompts and create unique NFTs using Lagrange AI and Chainlink Functions
