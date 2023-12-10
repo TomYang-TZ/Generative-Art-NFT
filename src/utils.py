@@ -575,7 +575,7 @@ def generate_prompt():
         negative_attributes.append({"trait_type": "Technical Avoidances", "value": trait})
     return positive_prompt, positive_attributes, negative_prompt, negative_attributes
 
-def datanft(dataset_name = "dataNFT",
+def generateArtNFT(dataset_name = "NFT",
             POS_TEXT_PROMPT = "mountain, river, tree, cats",
             NEG_TEXT_PROMPT = 'violent',
             SPACE_UUID = "9f62111c-16aa-4111-bb24-e66b9923b0d0",
@@ -738,7 +738,7 @@ def datanft(dataset_name = "dataNFT",
         
     #     time.sleep(10)
     #     now = time.time()
-    #     # if the time to create datanft is more than 2 minutes, break
+    #     # if the time to create NFT is more than 2 minutes, break
     #     if now - start > 120:
     #         print("Time out")
     #         raise Exception("Time out")
@@ -767,7 +767,7 @@ def datanft(dataset_name = "dataNFT",
 if __name__ == "__main__":
     # Example usage
     POS_TEXT_PROMPT, positive_attributes_list, NEG_TEXT_PROMPT, negative_attributes_list = generate_prompt()
-    mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = datanft(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
+    mcs_img_link, chainlink_function_contract_address, nft_contract_address, dataset_address, license_mint_hash  = generateArtNFT(POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT)
     print("MCS Image Link: ",mcs_img_link)
     print("Chainlink Function Contract address: ",chainlink_function_contract_address)
     print("NFT Contract address: ",nft_contract_address)

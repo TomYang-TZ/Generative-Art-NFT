@@ -4,7 +4,7 @@ import json
 import traceback
 from flask import Flask, render_template, request, jsonify, Response
 sys.path.append(os.path.join('.','src'))  # Add the src folder to the Python path
-from src.utils import datanft,generate_prompt  # Import the datanft and prompt generation functions
+from src.utils import generateArtNFT,generate_prompt  # Import the generateArtNFT and prompt generation functions
 
 app = Flask(__name__)
 
@@ -38,10 +38,10 @@ def generate():
     # pos_text_prompt = request.form['posTextPrompt']
     # neg_text_prompt = request.form['negTextPrompt']
 
-    # Call the datanft function from your utils.py
+    # Call the generateArtNFT function from your utils.py
     try:
             POS_TEXT_PROMPT, positive_attributes_list, NEG_TEXT_PROMPT, negative_attributes_list = generate_prompt()
-            mcs_img_link, chainlink_function_contract_address, contract_address, dataset_address, license_mint_hash = datanft(
+            mcs_img_link, chainlink_function_contract_address, contract_address, dataset_address, license_mint_hash = generateArtNFT(
                 dataset_name=dataset_name, SPACE_UUID=space_uuid, SEED=-1, UI=True, POS_TEXT_PROMPT=POS_TEXT_PROMPT, NEG_TEXT_PROMPT=NEG_TEXT_PROMPT,
             )
             print({
