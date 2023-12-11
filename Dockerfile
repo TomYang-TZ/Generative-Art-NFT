@@ -15,9 +15,9 @@ RUN pip install -i https://test.pypi.org/simple/ lag-sdk==0.4.12
 # Make port 9999 available to the world outside this container
 EXPOSE 9999
 
-# Define environment variable
-ENV MUMBAI_RPC=https://rpc-mumbai.maticvigil.com
-ENV SPACE_UUID=eccbf673-4277-4f54-a71d-0286d5be8771
+# # Define environment variable
+# ENV MUMBAI_RPC=https://rpc-mumbai.maticvigil.com
+# ENV SPACE_UUID=eccbf673-4277-4f54-a71d-0286d5be8771
 
 ENV COMMANDLINE_ARGS="--listen --port=9999 --enable-insecure-extension-access --api"
 
