@@ -39,7 +39,7 @@ chmod +x setup.sh
 ```
 
 ## Usage
-Note that all our functions run locally, your information is not collected. Please remember to use your personal API token from your ***[Lagrange Testnet](https://testnet.lagrangedao.org/main)*** account as the Lagrange API key.
+Note that all our functions run locally, your information is not collected. Please remember to use your personal API token from your ***[Lagrange Testnet](https://testnet.lagrangedao.org/main)*** account as the Lagrange API key. To register for a Multichain Storage(MCS) API key, sign up [here](https://multichain.storage/home) and go to setting.  
 ### Running Locally
 
 To run the application locally:
