@@ -65,7 +65,7 @@ To run the application using Docker:
 
 2. Run the Docker container:
    ```bash
-   docker run -p 9999:9999 artnft-app # Remember to change the exposed port in the Dockerfile accordingly
+   docker run -p 9999:9999 artnft-app 
    ```
 
    The Dockerfile is located at `Generative-Art-NFT/Dockerfile`.
