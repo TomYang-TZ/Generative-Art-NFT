@@ -16,7 +16,7 @@ from web3.middleware import geth_poa_middleware
 from swan_lag.api_client import APIClient
 from swan_lag.api.lag_client import LagAPI
 
-DEBUG = False
+DEBUG = True
 
 abi = '''[
   {
@@ -584,7 +584,9 @@ def generateArtNFT(dataset_name = "NFT",
     global lagrange_api_key,private_key,wallet_address,mumbai_rpc,api_client,lag_client,chain_id,abi
     
     dot_env_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-    if not UI: load_dotenv(dot_env_path)
+    if not UI: 
+      load_dotenv(dot_env_path)
+      SPACE_UUID = os.environ.get("SPACE_UUID")
     
     print("Positive Prompt:", POS_TEXT_PROMPT)
     print("Negative Prompt:", NEG_TEXT_PROMPT)
@@ -598,7 +600,8 @@ def generateArtNFT(dataset_name = "NFT",
     chain_id = 80001
     
     # First, we need to retreive the link to the diffusion model hosted on a lagrange space through its space uuid
-    SPACE_UUID = os.environ.get("SPACE_UUID")
+    # SPACE_UUID = os.environ.get("SPACE_UUID")
+    if DEBUG: print("Space UUID: ",SPACE_UUID)
     print("Getting result uri from LAG")
     res = lag_client.get_result_uri_from_space_uuid(SPACE_UUID)
     if DEBUG: print(res)
