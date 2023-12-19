@@ -734,49 +734,6 @@ def generateArtNFT(dataset_name="NFT",
         os.remove(img_path)
         raise Exception(e)
 
-    # res = lag_client.data_nft_request(chain_id,wallet_address,dataset_name)
-    # start = time.time()
-    # print("Waiting for data NFT to be created")
-    # while True:
-    #     res = lag_client.try_claim_data_nft(wallet_address,dataset_name)
-    #     if DEBUG:print(res)
-    #     claimable = 'not claimable' not in res['message']
-    #     res = lag_client.get_data_nft_info(wallet_address,dataset_name)
-    #     if DEBUG:print(res)
-    #     nft = res['data']['nft']
-    #     contract_address = nft['contract_address']
-
-    #     if contract_address and claimable: break
-    #     if contract_address and not claimable: 
-    #         print("Not claimable")
-    #         break
-
-    #     time.sleep(10)
-    #     now = time.time()
-    #     # if the time to create NFT is more than 2 minutes, break
-    #     if now - start > 120:
-    #         print("Time out")
-    #         raise Exception("Time out")
-    # if claimable: 
-    #     print("Data NFT claimable")
-
-    #     # print("Data NFT contract address: ",contract_address)
-
-    # # Finally we create a dataset license
-    # res = lag_client.create_dataset_license(wallet_address,dataset_name,contract_address,chain_id,wallet_address)
-    # if res['status'] != 'success':
-    #     raise Exception("Error creating dataset license")
-    # print("Dataset license created")
-    # # license_contract_address = res['data']['contract_address']
-    # license_ipfs_uri = res['data']['ipfs_uri']
-    # license_mint_hash = res['data']['mint_hash']
-    # if DEBUG: print(res)
-
-    # os.remove(img_path)
-    # dataset_address = f"https://testnet.lagrangedao.org/datasets/{wallet_address}/{dataset_name}/files"
-
-    # return img_link,contract_address,dataset_address,license_ipfs_uri,license_mint_hash
-
 
 if __name__ == "__main__":
     # Example usage
